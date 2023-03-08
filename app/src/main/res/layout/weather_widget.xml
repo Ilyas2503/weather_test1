@@ -1,0 +1,99 @@
+<RelativeLayout
+    android:id="@+id/widget"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.WeatherTest.AppWidget.Container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:theme="@style/Theme.WeatherTest.AppWidgetContainer">
+
+    <TextView
+        android:id="@+id/temperature_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/temperature_en"
+        android:textColor="@color/black"
+        android:textSize="12sp" />
+
+
+    <TextView
+        android:id="@+id/temperature_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        tools:text="25"
+        android:layout_alignBottom="@id/temperature_label"
+        android:textColor="@color/black"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/city_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/city_en"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:layout_below="@id/temperature_label"/>
+
+    <TextView
+        android:id="@+id/city_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        tools:text="Bishkek"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:layout_alignBottom="@id/city_label"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/last_updated_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="@string/last_updated_en"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:layout_below="@id/city_label" />
+
+    <TextView
+        android:id="@+id/last_updated_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        tools:text="20:00"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/last_updated_label"/>
+
+
+    <TextView
+        android:id="@+id/weather_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/last_updated_label"
+        android:layout_marginBottom="0dp"
+        tools:text="Rain"
+        android:textColor="@color/black"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:text="Зайдите в приложения для обновления виджета"
+        android:layout_below="@id/weather_desc" />
+</RelativeLayout>

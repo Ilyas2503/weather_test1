@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="kg.weathertest.MainActivity">
+    <item
+        android:id="@+id/action_language_kg"
+        android:orderInCategory="100"
+        android:title=""
+        android:icon="@drawable/kyrgyzstan"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_language_en"
+        android:orderInCategory="100"
+        android:title=""
+        android:icon="@drawable/usa"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_language_ru"
+        android:orderInCategory="100"
+        android:title=""
+        android:icon="@drawable/russia"
+        app:showAsAction="always" />
+</menu>

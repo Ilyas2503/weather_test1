@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">WeatherTest</string>
+    <string name="temperature_en">Temperature:</string>
+    <string name="city_en">City:</string>
+    <string name="last_updated_en">Last updated:</string>
+
+    <string name="temperature_ru">Температура:</string>
+    <string name="city_ru">Город:</string>
+    <string name="last_updated_ru">Последнее обновление:</string>
+
+    <string name="temperature_kg">Температура:</string>
+    <string name="city_kg">Шаар:</string>
+    <string name="last_updated_kg">Акыркы жаңыланган убактысы:</string>
+    <string name="temperature_celcius">%1$s °C</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+</resources>
