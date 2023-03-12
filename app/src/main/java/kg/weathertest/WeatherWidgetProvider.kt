@@ -66,6 +66,9 @@ internal fun updateAppWidget(
 ) {
     val views = RemoteViews(context.packageName, R.layout.weather_widget)
 
+    if (temp.isNotEmpty()) {
+        views.setTextViewText(R.id.placeholder, "")
+    }
     views.setTextViewText(R.id.temperature_value, temp)
     views.setTextViewText(R.id.city_value, city)
     views.setTextViewText(R.id.last_updated_value, lastUpdated)

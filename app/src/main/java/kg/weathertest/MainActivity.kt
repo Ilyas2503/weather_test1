@@ -2,6 +2,7 @@ package kg.weathertest
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -9,6 +10,8 @@ import android.os.Bundle
 import android.os.Looper
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -46,13 +49,20 @@ class MainActivity : AppCompatActivity() {
     private var weatherIcon = ""
     private var weatherDesc = ""
 
-    private var currentLocation: Location? = null
+
+    private val locationSharedPrefs  by lazy {
+        applicationContext.getSharedPreferences("LOCATION_PREFS", Context.MODE_PRIVATE) }
+
+    private val lat by lazy { locationSharedPrefs.getString(LOCATION_LAT_SHARED_PREFS_KEY,"42.87")  ?: ""}
+    private val lon by lazy { locationSharedPrefs.getString(LOCATION_LON_SHARED_PREFS_KEY,"74.56") ?: ""}
+    private val language by lazy { locationSharedPrefs.getString(LOCATION_LANG_SHARED_PREFS_KEY,"") ?: ""}
 
     private var locationCallback: LocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             val locationList = locationResult.locations
             if (locationList.isNotEmpty()) {
-                currentLocation = locationList.last()
+                val currentLocation = locationList.last()
+                saveLocation(currentLocation)
                 getWeatherData(
                     currentLocation?.latitude.toString(),
                     currentLocation?.longitude.toString(),
@@ -73,26 +83,44 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         binding.update.setOnClickListener { view ->
-            startLocationUpdates()
+            getWeatherData(lat, lon, language)
         }
+    }
 
+    private fun saveLanguage(language: String) {
+        locationSharedPrefs.edit().apply {
+            putString(LOCATION_LANG_SHARED_PREFS_KEY, language)
+        }.apply()
+    }
+
+    private fun saveLocation(currentLocation: Location?) {
+        val  lat: String = currentLocation?.latitude.toString()
+        val  lon: String = currentLocation?.latitude.toString()
+        locationSharedPrefs.edit().apply {
+            putString(LOCATION_LAT_SHARED_PREFS_KEY, lat)
+            putString(LOCATION_LON_SHARED_PREFS_KEY, lon)
+        }.apply()
     }
 
     private fun getWeatherData(lat: String, lon: String, lang: String) {
+        if(lat.isEmpty() || lon.isEmpty()) return
         val apiInterface: ApiInterface = ApiClient.getClient().create(ApiInterface::class.java)
         val call: Call<WeatherResponse> = apiInterface.getWeatherData(lat, lon, lang)
+        binding.progressBar.visibility = View.VISIBLE
+
         call.enqueue(object : retrofit2.Callback<WeatherResponse> {
             override fun onResponse(
                 call: Call<WeatherResponse?>?, response: retrofit2.Response<WeatherResponse>
             ) {
                 temp = getString(
                     R.string.temperature_celcius,
-                    response.body()?.main?.temp?.convertFahrenheitToCelsius()
+                    response.body()?.main?.temp?.convertFahrenheitToCelsius().toString()
                 )
                 cityName = response.body()?.name ?: ""
                 weatherIcon =
                     "https://openweathermap.org/img/wn/${response.body()?.weather?.last()?.icon}@4x.png"
                 weatherDesc = response.body()?.weather?.last()?.description ?: ""
+                binding.progressBar.visibility = View.GONE
                 binding.cityValue.text = cityName
                 binding.lastUpdatedValue.text = getLastUpdated()
                 binding.temperatureValue.text = temp
@@ -103,7 +131,12 @@ class MainActivity : AppCompatActivity() {
 
             }
 
-            override fun onFailure(call: Call<WeatherResponse?>?, t: Throwable?) {}
+            override fun onFailure(call: Call<WeatherResponse?>?, t: Throwable?) {
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(
+                    applicationContext, "Something went wrong " + t.toString(), Toast.LENGTH_LONG
+                ).show()
+            }
         })
     }
 
@@ -138,30 +171,21 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_language_en -> {
+                saveLanguage(Language.ENGLISH.shortName)
                 switchLanguage(Language.ENGLISH)
-                getWeatherData(
-                    currentLocation?.latitude.toString(),
-                    currentLocation?.longitude.toString(),
-                    Language.ENGLISH.shortName
-                )
+                getWeatherData(lat, lon, Language.ENGLISH.shortName)
                 true
             }
             R.id.action_language_kg -> {
+                saveLanguage(Language.KYRGYZ.shortName)
                 switchLanguage(Language.KYRGYZ)
-                getWeatherData(
-                    currentLocation?.latitude.toString(),
-                    currentLocation?.longitude.toString(),
-                    Language.KYRGYZ.shortName
-                )
+                getWeatherData(lat, lon, Language.KYRGYZ.shortName)
                 true
             }
             R.id.action_language_ru -> {
+                saveLanguage(Language.RUSSIAN.shortName)
                 switchLanguage(Language.RUSSIAN)
-                getWeatherData(
-                    currentLocation?.latitude.toString(),
-                    currentLocation?.longitude.toString(),
-                    Language.RUSSIAN.shortName
-                )
+                getWeatherData(lat, lon, Language.RUSSIAN.shortName)
                 true
             }
 
@@ -200,7 +224,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        startLocationUpdates()
+        if (lat.isNotEmpty() && lon.isNotEmpty()) {
+            getWeatherData(lat, lon, language)
+        } else {
+            startLocationUpdates()
+        }
     }
 
     override fun onPause() {
@@ -262,7 +290,9 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val MY_PERMISSIONS_REQUEST_LOCATION = 99
+        private const val LOCATION_LAT_SHARED_PREFS_KEY = "location_latitude"
+        private const val LOCATION_LON_SHARED_PREFS_KEY = "location_longitude"
+        private const val LOCATION_LANG_SHARED_PREFS_KEY = "location_language"
     }
 }
-
 
